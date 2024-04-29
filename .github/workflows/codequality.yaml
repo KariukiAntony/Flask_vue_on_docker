@@ -1,0 +1,49 @@
+# Code quality assurance workflow checks for code syntax and best practice violation
+
+name: Code Quality Assuarance WorkFlow
+
+run-name: Code Quality Assuarance WorkFlow
+
+on:
+  push:
+    branches:
+      - dev
+
+  pull_request:
+    branches:
+      - dev
+
+  workflow_dispatch:
+
+    
+jobs:
+  CodeLinting:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: setup python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: install dependecies
+        run: |
+          pip install -- upgrade pip 
+          pip install flake8 black
+
+      - name: lint
+        shell: bash
+        run: |
+          flake8 .
+          black --check .
