@@ -1,0 +1,31 @@
+services:
+  vue-app:
+    container_name: vue-prod-cont
+    build:
+      context: ./client
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - "8000:80"
+    networks:
+      - flask_vue
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+  server:
+    container_name: server-app
+    build:
+      context: ./server
+      dockerfile: Dockerfile.prod
+
+
+networks:
+  flask_vue:
+    driver: bridge
