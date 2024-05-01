@@ -1,0 +1,19 @@
+services:
+  vue-app:
+    container_name: vue-cont
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./client:/app"
+      - "/app/node-modules"
+    networks:
+      - flask_vue_network
+    command: ["http-server", "dist"]
+
+networks:
+  flask_vue_network:
+    driver: bridge
