@@ -256,6 +256,7 @@ export default {
       axios
         .get(path)
         .then((resp) => {
+        console.log(resp.data)
           this.books = resp.data.books;
         })
         .catch((error) => {
