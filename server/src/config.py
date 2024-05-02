@@ -5,6 +5,7 @@ from dataclasses import dataclass
 load_dotenv()
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+
 @dataclass(eq=False)
 class BaseConfig(object):
     SECRET_KEY: str = os.urandom(20)

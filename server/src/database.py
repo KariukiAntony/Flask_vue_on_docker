@@ -60,15 +60,15 @@ class Database(object):
         sql = """ SELECT * FROM {} ORDER BY id DESC""".format(self.table)
         raw_data = self.cursor.execute(sql).fetchall()
         return [self.to_json(book) for book in raw_data]
-    
+
     def add_new_book(self, data: dict):
-        sql = """ INSERT INTO {} (title, author, read)VALUES(?,?,?)""".format(self.table)
-        self.cursor.execute(sql, (data.get("title"), data.get("author"), data.get("read")))
+        sql = """ INSERT INTO {} (title, author, read)VALUES(?,?,?)""".format(
+            self.table
+        )
+        self.cursor.execute(
+            sql, (data.get("title"), data.get("author"), data.get("read"))
+        )
         self.conn.commit()
 
     def to_json(self, data):
-        return {
-            "title":data[1],
-            "author": data[2],
-            "read": data[3]
-        }
+        return {"title": data[1], "author": data[2], "read": data[3]}

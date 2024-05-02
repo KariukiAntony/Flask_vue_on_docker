@@ -10,7 +10,7 @@ from src.main import book_bp
 def create_app(config: str) -> Flask:
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_dict[config])
-    
+
     # enable CORS
     CORS(app, resources={r"/*": {"origins": "*"}})
 
