@@ -29,9 +29,13 @@ class Book(MethodView):
     def delete(self, id):
         try:
             self.model.delete_book(id)
-            return jsonify({"status": "success", "message": "Book deleted successfully"}), 200
+            return (
+                jsonify({"status": "success", "message": "Book deleted successfully"}),
+                200,
+            )
         except Exception as e:
             return jsonify({"status": "failed", "message": str(e)})
+
 
 class Books(MethodView):
     def __init__(self) -> None:
