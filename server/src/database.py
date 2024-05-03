@@ -61,7 +61,7 @@ class Database(object):
         raw_data = self.cursor.execute(sql).fetchall()
         return [self.to_json(book) for book in raw_data]
 
-    def add_new_book(self, data: dict):
+    def add_new_book(self, data: dict) -> None:
         sql = """ INSERT INTO {} (title, author, read)VALUES(?,?,?)""".format(
             self.table
         )
@@ -70,5 +70,20 @@ class Database(object):
         )
         self.conn.commit()
 
-    def to_json(self, data):
-        return {"title": data[1], "author": data[2], "read": data[3]}
+    def update_book(self, data: dict) -> None:
+        sql = """UPDATE {} SET title=?, author=?, read=? WHERE id=?""".format(
+            self.table
+        )
+        self.cursor.execute(
+            sql,
+            (data.get("title"), data.get("author"), data.get("read"), data.get("id")),
+        )
+        self.conn.commit()
+
+    def delete_book(self, id: int) -> None:
+        sql = """DELETE FROM {} WHERE id=?""".format(self.table)
+        self.cursor.execute(sql, (id,))
+        self.conn.commit()
+
+    def to_json(self, data: dict) -> dict:
+        return {"id": data[0], "title": data[1], "author": data[2], "read": data[3]}

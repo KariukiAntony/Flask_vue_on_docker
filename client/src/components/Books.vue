@@ -209,6 +209,7 @@
 <script>
 import axios from "axios";
 import Alert from "./Alert.vue";
+let BASE_URL = "http://127.0.0.1:5000"
 
 export default {
   name: "Books",
@@ -238,12 +239,12 @@ export default {
   },
   methods: {
     addBook(payload) {
-      const path = `http://127.0.0.1:5000/books`;
+      const path = `${BASE_URL}/books`;
       axios
         .post(path, payload)
         .then(() => {
           this.getBooks();
-          this.message = "Book added";
+          this.message = resp.data.message;
           this.showMessage = true;
         })
         .catch((error) => {
@@ -252,7 +253,7 @@ export default {
         });
     },
     getBooks() {
-      const path = "http://127.0.0.1:5000/books";
+      const path = `${BASE_URL}/books`;
       axios
         .get(path)
         .then((resp) => {
@@ -323,11 +324,11 @@ export default {
         this.updateBook(payload, this.editBookForm.id)
     },
     updateBook(payload, bookID){
-        const path = `http://127.0.0.1:5000/books/${bookID}`
+        const path = `${BASE_URL}/books/${bookID}`
         axios.put(path, payload)
         .then(()=> {
             this.getBooks();
-            this.message = "Book updated !";
+            this.message = resp.data.message;
             this.showMessage = true
         })
         .catch((error) => {
@@ -344,11 +345,11 @@ export default {
         this.removeBook(book.id)
     },
     removeBook(bookID){
-        const path = `http://127.0.0.1:5000/books/${bookID}`
+        const path = `${BASE_URL}/books/${bookID}`
         axios.delete(path)
-        .then(() => {
+        .then((resp) => {
             this.getBooks()
-            this.message = "Book removed!";
+            this.message = resp.data.message;
             this.showMessage = true
         })
         .catch((error) => {
