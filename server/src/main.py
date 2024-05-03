@@ -13,6 +13,25 @@ class Book(MethodView):
     def get(self, id):
         return jsonify({"message": f"Hello this is the id: {id}"}), 200
 
+    def put(self, id):
+        data = request.get_json()
+        try:
+            data.update({"id": id})
+            self.model.update_book(data)
+            return (
+                jsonify({"status": "success", "message": "book updated successfully"}),
+                202,
+            )
+
+        except Exception as e:
+            return jsonify({"status": "failed", "message": str(e)}), 500
+
+    def delete(self, id):
+        try:
+            self.model.delete_book(id)
+            return jsonify({"status": "success", "message": "Book deleted successfully"}), 200
+        except Exception as e:
+            return jsonify({"status": "failed", "message": str(e)})
 
 class Books(MethodView):
     def __init__(self) -> None:
@@ -32,5 +51,5 @@ class Books(MethodView):
             return jsonify({"status": "failed", "message": str(e)})
 
 
-book_bp.add_url_rule("/book/<int:id>", view_func=Book.as_view("book"))
+book_bp.add_url_rule("/books/<string:id>", view_func=Book.as_view("book"))
 book_bp.add_url_rule("/books", view_func=Books.as_view("books"))
