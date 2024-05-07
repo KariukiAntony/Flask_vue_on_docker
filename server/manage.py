@@ -2,6 +2,7 @@ import os, sys
 import unittest
 from flask.cli import FlaskGroup
 from src import create_app
+
 config = os.environ.get("CONFIG")
 app = create_app(config)
 cli = FlaskGroup(app)
