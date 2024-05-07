@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import unittest
 from flask.cli import FlaskGroup
 from src import create_app
