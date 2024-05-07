@@ -31,7 +31,7 @@ class Book(MethodView):
             self.model.delete_book(id)
             return (
                 jsonify({"status": "success", "message": "Book deleted successfully"}),
-                200,
+                204,
             )
         except Exception as e:
             return jsonify({"status": "failed", "message": str(e)})
@@ -50,7 +50,7 @@ class Books(MethodView):
         data = request.get_json()
         try:
             self.model.add_new_book(data)
-            return jsonify({"status": "success", "message": "Book added"}), 200
+            return jsonify({"status": "success", "message": "Book added"}), 201
         except Exception as e:
             return jsonify({"status": "failed", "message": str(e)})
 
