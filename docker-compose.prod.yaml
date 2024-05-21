@@ -3,14 +3,17 @@ services:
     container_name: vue-prod-cont
     build:
       context: ./client
-      dockerfile: Dockerfile.prod
+      dockerfile: prod.Dockerfile
     restart: always
     ports:
       - "8000:80"
     networks:
       - flask_vue
+    depends_on:
+      - db
+      - server
 
-  nginx:
+  db:
     build:
       context: ./nginx
       dockerfile: Dockerfile
@@ -20,10 +23,14 @@ services:
       - server
 
   server:
-    container_name: server-app
     build:
       context: ./server
-      dockerfile: Dockerfile.prod
+      dockerfile: prod.Dockerfile
+    container_name: server-app
+    restart: unless-stopped
+    env_file:
+      - ./server/.env.prod
+    command: gunicorn 
 
 
 networks:
