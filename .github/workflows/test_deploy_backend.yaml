@@ -1,0 +1,49 @@
+name: Test and Deploy
+run-name: Test and Deploy
+
+on:
+  push:
+    branches: ["main"]
+    tags:
+      - "*"
+  pull_request:
+    branches: ["main"]
+    types:
+      - opened
+      - synchronize
+
+  workflow_dispatch:
+
+jobs:
+  Test:
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    runs-on: [ubuntu-latest]
+    env:
+      DATABASE_URL: sqlite:///books.sqlite
+
+    strategy:
+      matrix:
+        python-version: [3.8.x]
+
+    defaults:
+      run:
+        working-directory: ./server
+    steps:
+      - name: checkout the repo
+        uses: actions/checkout@v4
+
+      - name: setup python ${{matrix}}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+          cache: "pip"
+
+      - name: Install dependecies
+        shell: bash
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: run tests
+        run: |
+          pytest
