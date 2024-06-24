@@ -16,7 +16,6 @@ on:
 
 jobs:
   Test:
-    if: github.event_name == 'pull_request' && github.event.action == 'opened'
     runs-on: [ubuntu-latest]
     env:
       DATABASE_URL: sqlite:///books.sqlite
@@ -24,9 +23,11 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8.x]
+      fail-fast: false
 
     defaults:
       run:
+        shell: bash
         working-directory: ./server
     steps:
       - name: checkout the repo

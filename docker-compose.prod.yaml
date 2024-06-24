@@ -1,38 +1,53 @@
+# Production docker compose file
 services:
-  vue-app:
-    container_name: vue-prod-cont
+  client:
     build:
       context: ./client
       dockerfile: prod.Dockerfile
-    restart: always
+    restart: unless-stopped
     ports:
-      - "8000:80"
+      - "80:80"
     networks:
       - flask_vue
     depends_on:
       - db
       - server
 
-  db:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - server
-
   server:
     build:
       context: ./server
       dockerfile: prod.Dockerfile
-    container_name: server-app
     restart: unless-stopped
     env_file:
       - ./server/.env.prod
-    command: gunicorn 
+    command: gunicorn --bind 0.0.0.0:5000 --workers 4 --threads 100 main:app
+    expose:
+      - 5000
+    networks:
+      - flask_vue
+    environment:
+      DATABASE: postgres
+      DATABASE_URL: postgresql://admin:admin@db:5432
+    depends_on:
+      - db
 
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    networks:
+      - flask_vue
+    volumes:
+      - data:/var/lib/postgresql/data
 
 networks:
   flask_vue:
     driver: bridge
+
+volumes:
+  data:
+    driver: local

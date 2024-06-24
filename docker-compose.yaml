@@ -1,19 +1,64 @@
+# Development docker compose file
 services:
-  vue-app:
-    container_name: vue-cont
+  client:
+    image: client-img
+    container_name: client-cont
     build:
       context: ./client
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
-      - "./client:/app"
-      - "/app/node-modules"
+      - "./client:/client"
+      - "/client/node-modules"
     networks:
       - flask_vue_network
     command: ["http-server", "dist"]
+    depends_on:
+      - db 
+      - server
+
+  server:
+    image: server-img
+    container_name: server-cont
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports: 
+      - "5000:5000"
+    env_file:
+      - path: ./server/.env
+        required: true
+    environment:
+      DATABASE: postgres
+      DATABASE_URL: postgresql://admin:admin@db:5432
+    restart: unless-stopped 
+    command: python3 manage.py run -h 0.0.0.0
+    networks:
+      - flask_vue_network
+    volumes:
+      - "./server:/server"
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true  
+
+  db:
+    image: postgres:13
+    container_name: db
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes: 
+      - flask_vue_data:/var/lib/postgresql/data
 
 networks:
   flask_vue_network:
     driver: bridge
+volumes:
+  flask_vue_data:
+    driver: local
