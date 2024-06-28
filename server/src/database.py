@@ -50,39 +50,49 @@ class Database(object):
     def create_tables(self):
         try:
             with current_app.open_resource(self.filename, mode="r") as file:
-                self.cursor.executescript(file.read())
+                self.cursor.execute(file.read())
                 print(colored("[+] tables created successfully..", "green"))
             self.conn.commit()
         except Exception as error:
             print(colored(f"[-] Error while creating table: {error}", "red"))
 
     def get_all_books(self) -> list:
-        sql = """ SELECT * FROM {} ORDER BY id DESC""".format(self.table)
-        raw_data = self.cursor.execute(sql).fetchall()
+        sql = """ SELECT * FROM {} ORDER BY id DESC;""".format(self.table)
+        self.cursor.execute(sql)
+        raw_data = self.cursor.fetchall()
         return [self.to_json(book) for book in raw_data]
 
+    def get_a_book(self, id):
+        sql = """SELECT * FROM {} WHERE id={};""".format(self.table, id)
+        self.cursor.execute(sql)
+        data = self.cursor.fetchone()
+        return self.to_json(data)
+
     def add_new_book(self, data: dict) -> None:
-        sql = """ INSERT INTO {} (title, author, read)VALUES(?,?,?)""".format(
-            self.table
+        sql = (
+            """ INSERT INTO {} (title, author, read)VALUES('{}', '{}', '{}');""".format(
+                self.table, data.get("title"), data.get("author"), data.get("read")
+            )
         )
-        self.cursor.execute(
-            sql, (data.get("title"), data.get("author"), data.get("read"))
-        )
+        self.cursor.execute(sql)
         self.conn.commit()
 
     def update_book(self, data: dict) -> None:
-        sql = """UPDATE {} SET title=?, author=?, read=? WHERE id=?""".format(
-            self.table
+        sql = (
+            """UPDATE {} SET title='{}', author='{}', read='{}' WHERE id={};""".format(
+                self.table,
+                data.get("title"),
+                data.get("author"),
+                data.get("read"),
+                data.get("id"),
+            )
         )
-        self.cursor.execute(
-            sql,
-            (data.get("title"), data.get("author"), data.get("read"), data.get("id")),
-        )
+        self.cursor.execute(sql)
         self.conn.commit()
 
     def delete_book(self, id: int) -> None:
-        sql = """DELETE FROM {} WHERE id=?""".format(self.table)
-        self.cursor.execute(sql, (id,))
+        sql = """DELETE FROM {} WHERE id={};""".format(self.table, id)
+        self.cursor.execute(sql)
         self.conn.commit()
 
     def to_json(self, data: dict) -> dict:

@@ -5,7 +5,8 @@
         </div>
         <br>
     </div>
-</template>
+</template> 
+
 
 <script>
 export default {

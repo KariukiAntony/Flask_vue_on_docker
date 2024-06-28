@@ -209,7 +209,9 @@
 <script>
 import axios from "axios";
 import Alert from "./Alert.vue";
-let BASE_URL = "http://127.0.0.1:5000"
+let BASE_URL = "http://127.0.0.1:/api"
+let DEV_BASE_URL = "http://127.0.0.1:5000/api" //* NB, use this url when you are not using nginx to proxy your requests
+let SECONDS = 1600
 
 export default {
   name: "Books",
@@ -238,17 +240,23 @@ export default {
     };
   },
   methods: {
+    hide_message(seconds=1000){
+      setTimeout(() => {
+        this.showMessage = false;
+      }, seconds);
+    },
     addBook(payload) {
       const path = `${BASE_URL}/books`;
       axios
         .post(path, payload)
-        .then(() => {
+        .then((resp) => {
           this.getBooks();
           this.message = resp.data.message;
+          console.log(resp.data.message)
           this.showMessage = true;
+          this.hide_message(SECONDS)
         })
         .catch((error) => {
-          console.error(error.message);
           this.getBooks();
         });
     },
@@ -257,7 +265,6 @@ export default {
       axios
         .get(path)
         .then((resp) => {
-        console.log(resp.data)
           this.books = resp.data.books;
         })
         .catch((error) => {
@@ -326,10 +333,11 @@ export default {
     updateBook(payload, bookID){
         const path = `${BASE_URL}/books/${bookID}`
         axios.put(path, payload)
-        .then(()=> {
+        .then((resp)=> {
             this.getBooks();
             this.message = resp.data.message;
             this.showMessage = true
+            this.hide_message(SECONDS)
         })
         .catch((error) => {
             console.error(error)
@@ -349,8 +357,10 @@ export default {
         axios.delete(path)
         .then((resp) => {
             this.getBooks()
+            console.log(`delete message: ${resp.data.message}`)
             this.message = resp.data.message;
             this.showMessage = true
+            this.hide_message(SECONDS)
         })
         .catch((error) => {
             console.error(error.message)

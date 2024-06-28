@@ -1,0 +1,60 @@
+# This Docker Compose file enables you to develop your applications using Docker.
+# Host volumes are mounted inside the Docker containers to reflect changes immediately.
+
+services:
+  client:
+    image: client-img
+    container_name: client-cont
+    build:
+      context: ./client
+      dockerfile: dev.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - "./client:/client"
+      - "/client/node-modules"
+    network_mode: host
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - db 
+      - server
+
+  server:
+    image: server-img
+    container_name: server-cont
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports: 
+      - "5000:5000"
+    env_file:
+      - path: ./server/.env
+        required: true
+    environment:
+      DATABASE: postgres
+      DATABASE_URL: postgresql://admin:admin@db:5432
+    restart: unless-stopped 
+    command: flask run
+    volumes:
+      - "./server/:/server/"
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true  
+
+  db:
+    image: postgres:13
+    container_name: db
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes: 
+      - flask_vue_data:/var/lib/postgresql/data
+
+volumes:
+  flask_vue_data:
+    driver: local

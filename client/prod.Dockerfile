@@ -1,5 +1,5 @@
 # build environment
-FROM node:18.19.1-alpine as build
+FROM node:18.19.1-alpine AS build
 
 RUN mkdir /app
 

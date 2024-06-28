@@ -1,20 +1,18 @@
-# Development docker compose file
+# This Docker Compose file enables you to test if all services are running well before switching to production
+# 
 services:
   client:
     image: client-img
     container_name: client-cont
     build:
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: stage.Dockerfile
     restart: unless-stopped
     ports:
       - "8000:8000"
-    volumes:
-      - "./client:/client"
-      - "/client/node-modules"
     networks:
       - flask_vue_network
-    command: ["http-server", "dist"]
+    command: ["http-server", "dist", "-p", "8000"]
     depends_on:
       - db 
       - server
@@ -37,8 +35,6 @@ services:
     command: python3 manage.py run -h 0.0.0.0
     networks:
       - flask_vue_network
-    volumes:
-      - "./server:/server"
     depends_on:
       - db
     stdin_open: true
@@ -50,6 +46,8 @@ services:
     ports:
       - "5432:5432"
     restart: always
+    networks:
+      - flask_vue_network
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
