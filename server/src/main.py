@@ -11,7 +11,11 @@ class Book(MethodView):
         self.model = Database()
 
     def get(self, id):
-        return jsonify({"message": f"Hello this is the id: {id}"}), 200
+        try:
+            data = self.model.get_a_book(id)
+            return jsonify(data), 200
+        except Exception as e:
+            return jsonify({"status": "failed", "message": str(e)})
 
     def put(self, id):
         data = request.get_json()
@@ -31,7 +35,7 @@ class Book(MethodView):
             self.model.delete_book(id)
             return (
                 jsonify({"status": "success", "message": "Book deleted successfully"}),
-                204,
+                200,
             )
         except Exception as e:
             return jsonify({"status": "failed", "message": str(e)})
@@ -55,5 +59,5 @@ class Books(MethodView):
             return jsonify({"status": "failed", "message": str(e)})
 
 
-book_bp.add_url_rule("/books/<string:id>", view_func=Book.as_view("book"))
-book_bp.add_url_rule("/books", view_func=Books.as_view("books"))
+book_bp.add_url_rule("/api/books/<string:id>", view_func=Book.as_view("book"))
+book_bp.add_url_rule("/api/books", view_func=Books.as_view("books"))

@@ -1,6 +1,6 @@
 FROM  python:3.8.3-slim-buster
 
-WORKDIR /sever
+WORKDIR /server
 
 ENV PYTHONDONTWRITEBYTECODE 1
 
@@ -10,13 +10,13 @@ RUN apt update && apt install -y netcat
 
 #install dependecies
 RUN pip install --no-cache-dir --upgrade pip
-COPY ./requirements.txt /sever
+COPY ./requirements.txt /server
 RUN pip install -r requirements.txt  
 
 # copy the project
-COPY ./entrypoint.sh /sever
+COPY ./entrypoint.sh /server
 
-COPY . /sever
+COPY . /server
 
 RUN chmod u+x ./entrypoint.sh
 
