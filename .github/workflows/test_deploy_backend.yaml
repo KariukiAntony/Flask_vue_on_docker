@@ -18,7 +18,7 @@ jobs:
   Test:
     runs-on: [ubuntu-latest]
     env:
-      DATABASE_URL: sqlite:///book.sqlite
+      DATABASE_URL: sqlite:///books.sqlite
 
     strategy:
       matrix:
@@ -47,4 +47,5 @@ jobs:
 
       - name: run tests
         run: |
+          rm books.sqlite
           pytest

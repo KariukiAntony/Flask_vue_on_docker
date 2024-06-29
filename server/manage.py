@@ -14,7 +14,6 @@ def run_tests():
     tests = unittest.TestLoader().discover("./src")
     results = unittest.TextTestRunner(verbosity=2).run(tests)
     if not results.wasSuccessful():
-
         sys.exit()
 
 
