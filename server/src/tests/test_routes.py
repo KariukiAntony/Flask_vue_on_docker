@@ -1,6 +1,5 @@
 import json
 
-import pytest
 from . import TestBaseCase
 
 
@@ -35,15 +34,13 @@ class TestRoutes(TestBaseCase):
                 "status": "success",
             },
         )
-        
+
     def test_get_book(self):
         resp = self.client.get(f"{self.base_url}/books/{self.id}")
-        data = resp.get_json()
-        print(resp.data)
         self.assertTrue((resp.status_code == 200))
         # self.assertIn("id", data.keys())
         # self.assertEqual(data.get("id"), self.id)
-        
+
     def test_get_books(self) -> None:
         resp = self.client.get(f"{self.base_url}/books")
         keys = resp.get_json().keys()
@@ -63,7 +60,7 @@ class TestRoutes(TestBaseCase):
         resp = self.client.delete(f"{self.base_url}/books/{self.id}")
         self.assertEqual(resp.status_code, 204)
         self.assertIs(resp.data.decode("utf-8"), "")
-    
+
     def tearDown(self) -> None:
         super().tearDown()
         self.client = None
