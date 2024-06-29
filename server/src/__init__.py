@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from werkzeug.exceptions import HTTPException
 import json
 from flask_cors import CORS
@@ -13,6 +13,9 @@ def create_app(config: str) -> Flask:
 
     # enable CORS
     CORS(app, resources={r"/*": {"origins": "*"}})
+    @app.route("/api/<int:id>")
+    def index(id):
+        return jsonify({"message": f"Hello this is the id: {id}"})
 
     # register the blueprints
     app.register_blueprint(book_bp)

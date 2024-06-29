@@ -12,7 +12,7 @@ class Book(MethodView):
 
     def get(self, id):
         try:
-            data = self.model.get_a_book(id)
+            data = self.model.get_a_book(int(id))
             return jsonify(data), 200
         except Exception as e:
             return jsonify({"status": "failed", "message": str(e)})
@@ -20,7 +20,7 @@ class Book(MethodView):
     def put(self, id):
         data = request.get_json()
         try:
-            data.update({"id": id})
+            data.update({"id": int(id)})
             self.model.update_book(data)
             return (
                 jsonify({"status": "success", "message": "book updated successfully"}),
@@ -32,10 +32,10 @@ class Book(MethodView):
 
     def delete(self, id):
         try:
-            self.model.delete_book(id)
+            self.model.delete_book(int(id))
             return (
                 jsonify({"status": "success", "message": "Book deleted successfully"}),
-                200,
+                204,
             )
         except Exception as e:
             return jsonify({"status": "failed", "message": str(e)})
