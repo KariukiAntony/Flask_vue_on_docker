@@ -1,7 +1,7 @@
 #! /bin/bash
 
 : '---- CONSTANTS ----'
-COMPOSE_FILE=docker-compose.yaml
+COMPOSE_FILE=docker-compose.prod.yaml
 
 function deploy() {
 
@@ -14,7 +14,7 @@ function deploy() {
 
     echo "Finally!. Your application is ready for deployment ..."
 
-    read -p "Do you want to deploy the latest changes? " input
+    read -p "Do you want to deploy the latest changes?(yes/no) " input
     lower=${input,,}
 
     if [ $lower == "yes" ] || [ $lower == "y" ]; then
